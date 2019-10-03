@@ -64,7 +64,7 @@
         <template v-else>
           <div class="title">{{ item.name }}</div>
           <div>
-            <span>${{ item.price }}</span>
+            <span>${{ item.price | commaFormat }}</span>
             - {{ item.notes }}
           </div>
           <div class="form-group">
@@ -99,6 +99,20 @@ export default {
     couldSendOrder() {
       const pkg = this.tempOrder[0];
       return this.vaildOrder(pkg);
+    }
+  },
+  filters: {
+    commaFormat: function(value) {
+      // 加上千分位符號
+      return value
+        .toString()
+        .replace(/^(-?\d+?)((?:\d{3})+)(?=\.\d+$|$)/, function(
+          all,
+          pre,
+          groupOf3Digital
+        ) {
+          return pre + groupOf3Digital.replace(/\d{3}/g, ",$&");
+        });
     }
   },
   methods: {
