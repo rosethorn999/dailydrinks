@@ -63,7 +63,7 @@
         </template>
         <template v-else>
           <div class="title">{{ item.name }}</div>
-          <div>
+          <div style="overflow:auto;">
             <span>${{ item.price | commaFormat }}</span>
             - {{ item.notes }}
           </div>
