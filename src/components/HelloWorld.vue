@@ -16,14 +16,14 @@
             <input type="text" v-model="item.name" placeholder="Name" />
           </div>
           <div class="form-group">
-            <input type="number" v-model="item.price" placeholder="Price" />
+            <input type="number" v-model.number="item.price" placeholder="Price" />
           </div>
           <div class="form-group">
             <textarea rows="3" v-model="item.notes" placeholder="Notes"></textarea>
           </div>
           <div class="form-group">
             <button @click="cancelTempOrder(index)">Cancal</button>
-            <button @click="createTempOrder(index)">Add</button>
+            <button @click="createTempOrder(index)" :disabled="!couldSendOrder">Add</button>
           </div>
         </template>
       </div>
@@ -38,17 +38,27 @@
         </template>
         <template v-else-if="item.state===3">
           <div class="form-group">
-            <input type="text" v-model="item.name" placeholder="Name" />
+            <input
+              type="text"
+              :class="{'in-valid':!vaildName(item.name)}"
+              v-model="item.name"
+              placeholder="Name"
+            />
           </div>
           <div class="form-group">
-            <input type="number" v-model="item.price" placeholder="Price" />
+            <input
+              type="number"
+              :class="{'in-valid':!vaildPrice(item.price)}"
+              v-model.number="item.price"
+              placeholder="Price"
+            />
           </div>
           <div class="form-group">
             <textarea rows="3" v-model="item.notes" placeholder="Notes"></textarea>
           </div>
           <div class="form-group">
             <!-- <button @click="cancelTempOrder(index)">Cancal</button> -->
-            <button @click="item.state=0">Save</button>
+            <button @click="updateOrderConfirm(index)">Save</button>
           </div>
         </template>
         <template v-else>
@@ -85,9 +95,14 @@ export default {
       tempOrder: []
     };
   },
+  computed: {
+    couldSendOrder() {
+      const pkg = this.tempOrder[0];
+      return this.vaildOrder(pkg);
+    }
+  },
   methods: {
     createTempOrder(i) {
-      // TODO valid data
       this.tempOrder[i].id = this.getGuid();
       this.createOrder(this.tempOrder[i]);
       this.tempOrder.splice(i, 1);
@@ -122,6 +137,12 @@ export default {
         this.list.splice(deletingIndex, 1);
       }, 1200);
     },
+    updateOrderConfirm(i) {
+      const pkg = this.list[i];
+      if (this.vaildOrder(pkg)) {
+        this.list[i].state = 0;
+      }
+    },
     updateOrder(i) {
       this.list[i].state = 3;
     },
@@ -135,6 +156,17 @@ export default {
     },
     getIndxById(id) {
       return this.list.findIndex(item => item.id === id);
+    },
+    vaildOrder(pkg) {
+      const validName = this.vaildName(pkg.name);
+      const validPrice = this.vaildPrice(pkg.price);
+      return validName && validPrice;
+    },
+    vaildName(v) {
+      return /.+/.exec(v.trim());
+    },
+    vaildPrice(v) {
+      return /\d+/.exec(v) && v >= 0;
     }
   }
 };
@@ -190,5 +222,11 @@ button {
   &:focus {
     outline: none;
   }
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+.in-valid {
+  border-color: red;
 }
 </style>
