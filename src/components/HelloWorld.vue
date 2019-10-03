@@ -16,7 +16,7 @@
             <input type="text" v-model="item.name" placeholder="Name" />
           </div>
           <div class="form-group">
-            <input type="number" v-model.number="item.price" placeholder="Price" />
+            <input type="number" v-model.number="item.price" placeholder="Price" pattern="\d*" />
           </div>
           <div class="form-group">
             <textarea rows="3" v-model="item.notes" placeholder="Notes"></textarea>
@@ -51,6 +51,7 @@
               :class="{'in-valid':!vaildPrice(item.price)}"
               v-model.number="item.price"
               placeholder="Price"
+              pattern="\d*"
             />
           </div>
           <div class="form-group">
